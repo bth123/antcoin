@@ -2,9 +2,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const coin = document.getElementById('coin');
     const countDisplay = document.getElementById('count');
     const clickSound = document.getElementById('click-sound');
-    const specialSound = document.getElementById('special-sound')
-    let count = getCookie('tapCount') ? parseInt(getCookie('tapCount')) : 0;
+    const specialSound = document.getElementById('special-sound');
+    const loginButton = document.getElementById('login-button');
+    const avatarImg = document.getElementById('avatar');
 
+    let count = getCookie('tapCount') ? parseInt(getCookie('tapCount')) : 0;
     countDisplay.textContent = count;
 
     coin.addEventListener('click', (event) => {
@@ -17,12 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             playSound(clickSound);
         }
+    });
+
     function playSound(audioElement) {
         const soundClone = audioElement.cloneNode();
         soundClone.play();
     }
-
-    });
 
     function setCookie(name, value, days) {
         const date = new Date();
@@ -41,4 +43,47 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return null;
     }
+
+    loginButton.addEventListener('click', () => {
+        const clientId = '1272105631385518092';
+        const redirectUri = 'https://bth123.github.io/antcoin/';
+        const scope = 'identify';
+        const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=${scope}`;
+        window.location.href = authUrl;
+    });
+
+    // This function would typically be called on the page that the redirectUri points to
+    function handleDiscordCallback() {
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        const accessToken = params.get('access_token');
+        if (accessToken) {
+            fetch('https://discord.com/api/users/@me', {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const avatarUrl = `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`;
+                setCookie('avatarUrl', avatarUrl, 365);
+                displayAvatar(avatarUrl);
+            })
+            .catch(error => console.error('Error fetching Discord user data:', error));
+        } else {
+            const storedAvatarUrl = getCookie('avatarUrl');
+            if (storedAvatarUrl) {
+                displayAvatar(storedAvatarUrl);
+            }
+        }
+    }
+
+    function displayAvatar(avatarUrl) {
+        avatarImg.src = avatarUrl;
+        avatarImg.style.display = 'block';
+        loginButton.style.display = 'none';
+    }
+
+    // Call this function on the redirect page
+    handleDiscordCallback();
 });
