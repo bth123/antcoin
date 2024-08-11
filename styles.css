@@ -1,0 +1,35 @@
+@font-face {
+    font-family: 'Monocraft';
+    src: url('https://raw.githubusercontent.com/IdreesInc/Monocraft/releases/download/v3.0/Monocraft.ttf') format('truetype');
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #303841;
+}
+
+span {
+    color: #FFFFFF;
+    font-family: Monocraft;
+}
+
+.container {
+    text-align: center;
+}
+
+#coin {
+    width: 192px;
+    cursor: pointer;
+    transition: transform 0.1s, scale 0.1s;
+    filter: drop-shadow(10px 10px 10px rgba(0, 0, 0, 0.5));
+    user-select: none;
+}
+
+#coin:active {
+    transform: scale(0.96) rotateX(30deg) rotateZ(3deg);
+}
