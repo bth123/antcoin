@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     loginButton.addEventListener('click', () => {
-        const clientId = 'YOUR_CLIENT_ID';
+        const clientId = '1272105631385518092';
         const redirectUri = 'https://bth123.github.io/antcoin/';
         const scope = 'identify';
         const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=${scope}`;
