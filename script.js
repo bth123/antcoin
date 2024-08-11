@@ -45,18 +45,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     loginButton.addEventListener('click', () => {
-        const clientId = '1272105631385518092';
+        const clientId = 'YOUR_CLIENT_ID';
         const redirectUri = 'https://bth123.github.io/antcoin/';
         const scope = 'identify';
         const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=${scope}`;
         window.location.href = authUrl;
     });
 
-    // This function would typically be called on the page that the redirectUri points to
+    // Handle the Discord redirect directly on the main page
     function handleDiscordCallback() {
         const hash = window.location.hash.substring(1);
         const params = new URLSearchParams(hash);
         const accessToken = params.get('access_token');
+
         if (accessToken) {
             fetch('https://discord.com/api/users/@me', {
                 headers: {
@@ -65,9 +66,14 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .then(response => response.json())
             .then(data => {
-                const avatarUrl = `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`;
+                const avatarUrl = data.avatar 
+                    ? `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`
+                    : `https://cdn.discordapp.com/embed/avatars/${data.discriminator % 5}.png`;
+
                 setCookie('avatarUrl', avatarUrl, 365);
                 displayAvatar(avatarUrl);
+                // Clear the hash after processing
+                window.location.hash = '';
             })
             .catch(error => console.error('Error fetching Discord user data:', error));
         } else {
@@ -84,6 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loginButton.style.display = 'none';
     }
 
-    // Call this function on the redirect page
+    // Call this function on the main page
     handleDiscordCallback();
 });
